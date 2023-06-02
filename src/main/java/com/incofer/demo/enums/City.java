@@ -1,0 +1,52 @@
+package com.incofer.demo.enums;
+
+
+@SuppressWarnings("checkstyle:RegexpMultiline")
+public enum City
+{
+    SAN_JOSE_ATLANTICO("ATLANTICO"),
+    SAN_JOSE_UCR("UCR"),
+    SAN_JOSE_ULATINA("ULATINA"),
+    SAN_JOSE_CFIA("CFIA"),
+    SAN_JOSE_UACA("UACA"),
+    SAN_JOSE_COLIMA("COLIMA"),
+    SAN_JOSE_CALLE_BLANCOS("CALLE_BLANCOS"),
+    SAN_JOSE_PACIFICO("PACIFICO"),
+    SAN_JOSE_CEMENTERIO("CEMENTERIO"),
+    SAN_JOSE_CONTRALORIA("CONTRALORIA"),
+    SAN_JOSE_SALLE("SALLE"),
+    SAN_JOSE_JACKS("JACKS"),
+    SAN_JOSE_PAVAS_CENTRO("PAVAS_CENTRO"),
+    SAN_JOSE_AYA("AYA"),
+    SAN_JOSE_PECOSA("PECOSA"),
+    SAN_JOSE_DEMASA("DEMASA"),
+    SAN_JOSE_METROPOLI("METROPOLI"),
+    CARTAGO_LOS_ANGELES("LOS_ANGELES"),
+    CARTAGO_TRES_RIOS("TRES_RIOS"),
+    CARTAGO_OREAMUNO("OREAMUNO"),
+    ALAJUELA_SAN_RAFAEL("SAN_RAFAEL"),
+    ALAJUELA("ALAJUELA"),
+    ALAJUELA_RIO_SEGUNDO("RIO_SEGUNDO"),
+    ALAJUELA_AEROPUERTO("AEROPUERTO"),
+    HEREDIA("HEREDIA"),
+    HEREDIA_BELEN("BELEN"),
+    HEREDIA_PEDREGAL("PEDREGAL"),
+    HEREDIA_SANTA_ROSA("SANTA_ROSA"),
+    HEREDIA_MIRAFLORES("MIRAFLORES"),
+    HEREDIA_SAN_FRANCISCO("SAN_FRANCISCO"),
+    HEREDIA_SAN_JOAQUIN("SAN_JOAQUIN");
+
+    private String displayText;
+
+    City(final String pDisplayText)
+    {
+        this.displayText = pDisplayText;
+    }
+
+    public final String getDisplayText()
+    {
+        return this.displayText;
+    }
+
+}
+

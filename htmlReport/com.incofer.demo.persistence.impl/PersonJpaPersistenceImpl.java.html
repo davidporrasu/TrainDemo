@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersonJpaPersistenceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TrainProject Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.incofer.demo.persistence.impl</a> &gt; <span class="el_source">PersonJpaPersistenceImpl.java</span></div><h1>PersonJpaPersistenceImpl.java</h1><pre class="source lang-java linenums">package com.incofer.demo.persistence.impl;
+
+import com.incofer.demo.persistence.PersonPersistence;
+import com.incofer.demo.model.Person;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+@Repository
+@Transactional
+<span class="nc" id="L17">public class PersonJpaPersistenceImpl implements PersonPersistence</span>
+{
+<span class="nc" id="L19">    private static final Logger logger = LoggerFactory.getLogger(PersonJpaPersistenceImpl.class);</span>
+
+    @PersistenceContext
+    private EntityManager entityManager;
+    private IllegalArgumentException e;
+
+    @Override
+    public Person save(Person person)
+    {
+<span class="nc" id="L28">        entityManager.persist(person);</span>
+<span class="nc" id="L29">        logger.info(&quot;Person saved successfully, Person Details=&quot; + person);</span>
+<span class="nc" id="L30">        return person;</span>
+    }
+
+    @Override
+    public Person findById(int id) throws PersonDaoException
+    {
+<span class="nc" id="L36">        Person person = entityManager.find(Person.class, id);</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (person == null)</span>
+        {
+<span class="nc" id="L39">            throw new PersonDaoException(&quot;Person with id &quot; + id + &quot; not found&quot;, e);</span>
+        }
+<span class="nc" id="L41">        logger.info(&quot;Person found successfully, Person Details=&quot; + person);</span>
+<span class="nc" id="L42">        return person;</span>
+    }
+
+    @Override
+    public void update(Person person)
+    {
+<span class="nc" id="L48">        entityManager.merge(person);</span>
+<span class="nc" id="L49">        logger.info(&quot;Person updated successfully, Person Details=&quot; + person);</span>
+<span class="nc" id="L50">    }</span>
+
+    @Override
+    public void delete(Person person) throws PersonDaoException
+    {
+        try
+        {
+<span class="nc" id="L57">            entityManager.remove(person);</span>
+<span class="nc" id="L58">            logger.info(&quot;Person deleted successfully, Person Details=&quot; + person);</span>
+<span class="nc" id="L59">        } catch (IllegalArgumentException e)</span>
+        {
+<span class="nc" id="L61">            throw new PersonDaoException(&quot;Error deleting person &quot; + person.getId(), e);</span>
+<span class="nc" id="L62">        }</span>
+<span class="nc" id="L63">    }</span>
+
+    public class PersonDaoException extends Throwable
+    {
+        public PersonDaoException(String s, IllegalArgumentException e)
+<span class="nc" id="L68">        {</span>
+<span class="nc" id="L69">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
