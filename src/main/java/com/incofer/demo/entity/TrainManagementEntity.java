@@ -32,6 +32,7 @@ public class TrainManagementEntity
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Type(type = "json")
     @Column(name = "trainManagementObject", columnDefinition = "json")
     private TrainManagement trainManagement;
