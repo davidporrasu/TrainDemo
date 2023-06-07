@@ -2,7 +2,6 @@ package com.incofer.demo.persistence;
 
 import com.incofer.demo.entity.StationEntity;
 import com.incofer.demo.model.Station;
-import com.incofer.demo.model.Train;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,9 @@ import javax.persistence.EntityManager;
 import java.util.Optional;
 
 @Repository
-@Slf4j
-public class StationRepositoryPersistenceImpl implements StationRepositoryPersistence {
+@Slf4j  
+public class StationRepositoryPersistenceImpl implements StationRepositoryPersistence
+{
     private final EntityManager entityManager;
 
     @Autowired

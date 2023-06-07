@@ -1,15 +1,15 @@
 package com.incofer.demo.persistence;
 
-import com.incofer.demo.model.Train;
+import com.incofer.demo.model.TrainSchedule;
 import lombok.NonNull;
 
 import java.util.Optional;
 
 public interface TrainScheduleRepositoryPersistence {
     /**
-     * GetSchedule
-     * @param scheduleId
+     * GetTrainSchedule
+     * @param TrainScheduleId
      * @return
      */
-    public Optional<Train> getSchedule(@NonNull final long scheduleId);
+    public Optional<TrainSchedule> getTrainSchedule(@NonNull final long TrainScheduleId);
 }
