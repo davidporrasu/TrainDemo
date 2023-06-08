@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import java.util.Optional;
 
 @Repository
-@Slf4j  
+@Slf4j
 public class StationRepositoryPersistenceImpl implements StationRepositoryPersistence
 {
     private final EntityManager entityManager;

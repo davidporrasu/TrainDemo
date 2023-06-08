@@ -21,6 +21,7 @@ import java.util.List;
 @JsonPropertyOrder({
         "id",
         "city",
+        "km",
         "activityTypes"
 })
 
@@ -31,5 +32,6 @@ public class Station
      */
     private long id;
     private City city;
+    private int km;
     List<ActivityType> activityTypes;
 }

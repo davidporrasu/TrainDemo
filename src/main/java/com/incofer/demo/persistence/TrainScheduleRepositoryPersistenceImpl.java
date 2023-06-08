@@ -1,7 +1,6 @@
 package com.incofer.demo.persistence;
 
 import com.incofer.demo.entity.TrainScheduleEntity;
-import com.incofer.demo.model.Train;
 import com.incofer.demo.model.TrainSchedule;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

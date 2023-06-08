@@ -27,6 +27,7 @@ public class TrainManagementService
     private StationRepository stationRepository;
     @Autowired
     private TrainScheduleRepository trainScheduleRepository;
+
     public TrainManagementService(TrainManagementRepository trainManagementRepository)
     {
         this.trainManagementRepository = trainManagementRepository;
@@ -39,7 +40,8 @@ public class TrainManagementService
     }
 
     @Transactional
-    public TrainManagement save(final TrainManagement save) {
+    public TrainManagement save(final TrainManagement save)
+    {
         TrainManagementEntity trainManagementEntity = TrainManagementEntity.builder()
                 .trainManagement(save)
                 .build();
@@ -47,13 +49,14 @@ public class TrainManagementService
     }
 
     @Transactional
-    public void deleteTrainManagement(final long id) {
+    public void deleteTrainManagement(final long id)
+    {
         this.trainManagementRepository.deleteTrainManagement(id);
     }
 
     public Station getCurrentStation(long trainManagementId)
     {
-        log.info("Start getCurrentStationId id {}", trainManagementId);
+        log.info("Start getCurrentStation id {}", trainManagementId);
 
         Optional<TrainManagementEntity> optionalTrainManagementEntity = this.trainManagementRepository.findById(trainManagementId);
 
@@ -61,26 +64,37 @@ public class TrainManagementService
         {
             TrainManagementEntity trainManagementEntity = optionalTrainManagementEntity.get();
             long currentStationId = trainManagementEntity.getTrainManagement().getCurrentStationId();
-            Optional<StationEntity> optionalStation = this.stationRepository.findById(currentStationId);
+            TrainSchedule trainSchedule = trainScheduleRepository.findById(trainManagementEntity.getTrainManagement().getTrainScheduleId())
+                    .orElseThrow(() ->
+                    {
+                        String errorMessage = "TrainSchedule not found for TrainManagement ID: " + trainManagementId;
+                        log.error(errorMessage);
+                        throw new IllegalArgumentException(errorMessage);
+                    }).getTrainSchedule();
+
+            Optional<Station> optionalStation = trainSchedule.getStations().stream()
+                    .filter(station -> station.getId() == currentStationId)
+                    .findFirst();
 
             if (optionalStation.isPresent())
             {
-                StationEntity existingStationEntity = optionalStation.get();
-                return existingStationEntity.getStation();
+                Station currentStation = optionalStation.get();
+                log.info("End getCurrentStation id {}: {}", trainManagementId, currentStation);
+                return currentStation;
             }
             else
             {
-                log.info("Else End getCurrentStationId id {}", trainManagementId);
+                log.info("Else End getCurrentStation id {}", trainManagementId);
                 throw new IllegalArgumentException("Station not found for currentStationId: " + currentStationId);
             }
         }
         else
         {
-            log.info("Else End getCurrentStationId id {}", trainManagementId);
+            log.info("Else End getCurrentStation id {}", trainManagementId);
             throw new IllegalArgumentException("TrainManagement not found for ID: " + trainManagementId);
         }
-
     }
+
 
     @Transactional
     public Status moveToNextStation(long trainManagementId)
@@ -103,7 +117,6 @@ public class TrainManagementService
                     throw new IllegalArgumentException(errorMessage);
                 });
 
-        // Verificar el estado actual del tren
         Status currentStatus = trainManagementEntity.getTrainManagement().getStatus();
         if (currentStatus.equals(Status.OUT_OF_SERVICE))
         {
@@ -119,7 +132,8 @@ public class TrainManagementService
         }
 
         TrainSchedule trainSchedule = trainScheduleRepository.findById(trainManagementEntity.getTrainManagement().getTrainScheduleId())
-                .orElseThrow(() -> {
+                .orElseThrow(() ->
+                {
                     String errorMessage = "TrainSchedule not found for TrainManagement ID: " + trainManagementId;
                     log.error(errorMessage);
                     throw new IllegalArgumentException(errorMessage);
@@ -141,20 +155,24 @@ public class TrainManagementService
         {
             String errorMessage = "Cannot move to next station, already at the last station";
             log.error(errorMessage);
-            throw new IllegalArgumentException(errorMessage);
+            throw new IllegalStateException(errorMessage);
         }
 
         Station nextStation = trainSchedule.getStations().get(currentIndex + 1);
         long nextStationId = nextStation.getId();
 
-        // Actualiza la estación actual en el TrainManagementEntity
+        // Verificar si es la última estación
+        if (currentIndex + 1 == trainSchedule.getStations().size() - 1)
+        {
+            trainManagementEntity.getTrainManagement().setStatus(Status.STOP);
+        }
+
+        // Actualizar la estación actual en el TrainManagementEntity
         trainManagementEntity.getTrainManagement().setCurrentStationId(nextStationId);
-        trainManagementEntity.getTrainManagement().setStatus(Status.MOVE);
         trainManagementRepository.save(trainManagementEntity);
 
         log.info("Train moved to the next station successfully");
 
-        // Retorna el nuevo estado del tren
         return trainManagementEntity.getTrainManagement().getStatus();
     }
 }
