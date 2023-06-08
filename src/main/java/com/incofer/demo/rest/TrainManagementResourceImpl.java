@@ -19,70 +19,51 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/trainManagement")
-public class TrainManagementResourceImpl
-{
+public class TrainManagementResourceImpl {
     @Autowired
     @Qualifier("trainManagementService")
     private TrainManagementService trainManagementService;
 
     @GetMapping("/currentStation")
-    public ResponseEntity<Station> getCurrentStation(@RequestParam long trainManagementId)
-    {
+    public ResponseEntity<Station> getCurrentStation(@RequestParam long trainManagementId) {
         log.info("Start Train management id {}", trainManagementId);
-        try
-        {
+        try {
             Station currentStation = trainManagementService.getCurrentStation(trainManagementId);
             return ResponseEntity.ok(currentStation);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
-        }
-        finally
-        {
+        } finally {
             log.info("End Train management id {}", trainManagementId);
         }
     }
 
     @PostMapping("/save")
-    public TrainManagement save(@RequestBody final TrainManagement trainManagement) throws Exception
-    {
+    public TrainManagement save(@RequestBody final TrainManagement trainManagement) throws Exception {
         return this.trainManagementService.save(trainManagement);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteTrainManagement(@RequestParam long id) throws Exception
-    {
+    public ResponseEntity<String> deleteTrainManagement(@RequestParam long id) throws Exception {
         this.trainManagementService.deleteTrainManagement(id);
         return new ResponseEntity<>("TrainManagement deleted successfully", HttpStatus.OK);
     }
 
     @GetMapping("/moveToNextStation")
-    public ResponseEntity<String> moveToNextStation(@RequestParam long trainManagementId)
-    {
+    public ResponseEntity<String> moveToNextStation(@RequestParam long trainManagementId) {
         log.info("Start Train moveToNextStation id {}", trainManagementId);
 
-        try
-        {
+        try {
             Status status = trainManagementService.moveToNextStation(trainManagementId);
             log.info("End Train moveToNextStation id {}", trainManagementId);
 
-            if (status == Status.STOP)
-            {
+            if (status == Status.STOP) {
                 return ResponseEntity.ok("The train has reached the last station and cannot move further.");
-            }
-            else
-            {
+            } else if (status == Status.MOVE) {
                 return ResponseEntity.ok("The train has successfully moved to the next station.");
+            } else {
+                return ResponseEntity.ok("The train is currently out of service and cannot move.");
             }
-        }
-        catch (IllegalArgumentException e)
-        {
-            log.error("Error moving train to next station: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        catch (IllegalStateException e)
-        {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             log.error("Error moving train to next station: {}", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }

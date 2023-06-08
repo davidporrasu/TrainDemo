@@ -5,6 +5,7 @@ import com.incofer.demo.model.Train;
 import com.incofer.demo.persistence.TrainRepositoryPersistence;
 import com.incofer.demo.persistence.repository.TrainRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class TrainService
     private TrainRepository trainRepository;
 
     @Autowired
+    @Qualifier("trainRepositoryPersistenceImpl")
     private TrainRepositoryPersistence trainRepositoryPersistence;
 
     public Train findById(final long id)

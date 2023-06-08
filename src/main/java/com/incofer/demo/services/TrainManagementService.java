@@ -2,6 +2,7 @@ package com.incofer.demo.services;
 
 import com.incofer.demo.entity.StationEntity;
 import com.incofer.demo.entity.TrainManagementEntity;
+import com.incofer.demo.enums.ActivityType;
 import com.incofer.demo.enums.Status;
 import com.incofer.demo.model.Station;
 import com.incofer.demo.model.TrainManagement;
@@ -14,13 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Service("trainManagementService")
-public class TrainManagementService
-{
+public class TrainManagementService {
     @Autowired
     private TrainManagementRepository trainManagementRepository;
     @Autowired
@@ -28,20 +30,17 @@ public class TrainManagementService
     @Autowired
     private TrainScheduleRepository trainScheduleRepository;
 
-    public TrainManagementService(TrainManagementRepository trainManagementRepository)
-    {
+    public TrainManagementService(TrainManagementRepository trainManagementRepository) {
         this.trainManagementRepository = trainManagementRepository;
     }
 
-    public TrainManagement findById(final long id)
-    {
+    public TrainManagement findById(final long id) {
         TrainManagementEntity entity = this.trainManagementRepository.getById(id);
         return entity.getTrainManagement();
     }
 
     @Transactional
-    public TrainManagement save(final TrainManagement save)
-    {
+    public TrainManagement save(final TrainManagement save) {
         TrainManagementEntity trainManagementEntity = TrainManagementEntity.builder()
                 .trainManagement(save)
                 .build();
@@ -49,19 +48,16 @@ public class TrainManagementService
     }
 
     @Transactional
-    public void deleteTrainManagement(final long id)
-    {
+    public void deleteTrainManagement(final long id) {
         this.trainManagementRepository.deleteTrainManagement(id);
     }
 
-    public Station getCurrentStation(long trainManagementId)
-    {
+    public Station getCurrentStation(long trainManagementId) {
         log.info("Start getCurrentStation id {}", trainManagementId);
 
         Optional<TrainManagementEntity> optionalTrainManagementEntity = this.trainManagementRepository.findById(trainManagementId);
 
-        if (optionalTrainManagementEntity.isPresent())
-        {
+        if (optionalTrainManagementEntity.isPresent()) {
             TrainManagementEntity trainManagementEntity = optionalTrainManagementEntity.get();
             long currentStationId = trainManagementEntity.getTrainManagement().getCurrentStationId();
             TrainSchedule trainSchedule = trainScheduleRepository.findById(trainManagementEntity.getTrainManagement().getTrainScheduleId())
@@ -76,25 +72,19 @@ public class TrainManagementService
                     .filter(station -> station.getId() == currentStationId)
                     .findFirst();
 
-            if (optionalStation.isPresent())
-            {
+            if (optionalStation.isPresent()) {
                 Station currentStation = optionalStation.get();
                 log.info("End getCurrentStation id {}: {}", trainManagementId, currentStation);
                 return currentStation;
-            }
-            else
-            {
+            } else {
                 log.info("Else End getCurrentStation id {}", trainManagementId);
                 throw new IllegalArgumentException("Station not found for currentStationId: " + currentStationId);
             }
-        }
-        else
-        {
+        } else {
             log.info("Else End getCurrentStation id {}", trainManagementId);
             throw new IllegalArgumentException("TrainManagement not found for ID: " + trainManagementId);
         }
     }
-
 
     @Transactional
     public Status moveToNextStation(long trainManagementId)
@@ -102,8 +92,7 @@ public class TrainManagementService
         log.info("Moving train to next station for trainManagementId: {}", trainManagementId);
 
         TrainManagementEntity trainManagementEntity = trainManagementRepository.findById(trainManagementId)
-                .orElseThrow(() ->
-                {
+                .orElseThrow(() -> {
                     String errorMessage = "TrainManagement not found for ID: " + trainManagementId;
                     log.error(errorMessage);
                     throw new IllegalArgumentException(errorMessage);
@@ -123,8 +112,7 @@ public class TrainManagementService
             String errorMessage = "Cannot move to next station, train is currently out of service";
             log.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
-        }
-        else if (currentStatus.equals(Status.STOP))
+        } else if (currentStatus.equals(Status.STOP))
         {
             String errorMessage = "Cannot move to next station, train is currently stopped";
             log.error(errorMessage);
@@ -158,21 +146,63 @@ public class TrainManagementService
             throw new IllegalStateException(errorMessage);
         }
 
-        Station nextStation = trainSchedule.getStations().get(currentIndex + 1);
-        long nextStationId = nextStation.getId();
+        Station lastStation = trainSchedule.getStations().get(currentIndex + 1);
+        long lastStationId = lastStation.getId();
 
         // Verificar si es la última estación
         if (currentIndex + 1 == trainSchedule.getStations().size() - 1)
         {
-            trainManagementEntity.getTrainManagement().setStatus(Status.STOP);
+            if (lastStation.getActivityTypes().contains(ActivityType.TURN_POINT))
+            {
+                // Estación final con actividad de "turn point" - Recorrido inverso
+                trainManagementEntity.getTrainManagement().setCurrentStationId(lastStationId);
+                trainManagementEntity.getTrainManagement().setStatus(Status.MOVE);
+                trainManagementRepository.save(trainManagementEntity);
+                log.info("Train has reached the last station with a turn point activity. Reversing the route.");
+
+                // Obtener la lista de estaciones en orden inverso
+                List<Station> reverseStations = new ArrayList<>(stations);
+                Collections.reverse(reverseStations);
+
+                // Actualizar el índice actual para el recorrido inverso
+                currentIndex = reverseStations.indexOf(lastStation);
+
+                // Establecer la nueva estación siguiente para el recorrido inverso
+                lastStation = reverseStations.get(currentIndex + 1);
+                lastStationId = lastStation.getId();
+            } else {
+                // Estación final sin actividad de "turn point" - Parar el tren
+                trainManagementEntity.getTrainManagement().setStatus(Status.STOP);
+                log.info("Train has reached the last station. No turn point activity found. Stopping the train.");
+            }
+        } else {
+            // No es la última estación - Continuar moviéndose
+            trainManagementEntity.getTrainManagement().setStatus(Status.MOVE);
+            log.info("Train will move to the next station");
         }
 
         // Actualizar la estación actual en el TrainManagementEntity
-        trainManagementEntity.getTrainManagement().setCurrentStationId(nextStationId);
+        trainManagementEntity.getTrainManagement().setCurrentStationId(lastStationId);
         trainManagementRepository.save(trainManagementEntity);
+
+        // Si la última estación tiene una actividad de "turn point", hacer el recorrido inverso
+        if (currentIndex + 1 == trainSchedule.getStations().size() - 1 && lastStation.getActivityTypes().contains(ActivityType.TURN_POINT)) {
+            trainManagementEntity.getTrainManagement().setCurrentStationId(currentStationId);
+            trainManagementEntity.getTrainManagement().setStatus(Status.MOVE);
+            trainManagementRepository.save(trainManagementEntity);
+            log.info("Train has reached the last station with a turn point activity. Returning to the previous station.");
+
+            // Restaurar la lista de estaciones en orden original
+            currentIndex = stations.indexOf(lastStation);
+
+            // Establecer la nueva estación siguiente para el recorrido inverso
+            lastStation = stations.get(currentIndex + 1);
+            lastStationId = lastStation.getId();
+        }
 
         log.info("Train moved to the next station successfully");
 
         return trainManagementEntity.getTrainManagement().getStatus();
     }
 }
+
