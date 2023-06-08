@@ -56,18 +56,35 @@ public class TrainManagementResourceImpl
         this.trainManagementService.deleteTrainManagement(id);
         return new ResponseEntity<>("TrainManagement deleted successfully", HttpStatus.OK);
     }
-    @PostMapping("/trainManagement/moveToNextStation")
-    public ResponseEntity<Status> moveToNextStation(@RequestParam long trainManagementId)
+
+    @GetMapping("/moveToNextStation")
+    public ResponseEntity<String> moveToNextStation(@RequestParam long trainManagementId)
     {
+        log.info("Start Train moveToNextStation id {}", trainManagementId);
+
         try
         {
             Status status = trainManagementService.moveToNextStation(trainManagementId);
-            return ResponseEntity.ok(status);
+            log.info("End Train moveToNextStation id {}", trainManagementId);
+
+            if (status == Status.STOP)
+            {
+                return ResponseEntity.ok("The train has reached the last station and cannot move further.");
+            }
+            else
+            {
+                return ResponseEntity.ok("The train has successfully moved to the next station.");
+            }
         }
         catch (IllegalArgumentException e)
         {
             log.error("Error moving train to next station: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        catch (IllegalStateException e)
+        {
+            log.error("Error moving train to next station: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
