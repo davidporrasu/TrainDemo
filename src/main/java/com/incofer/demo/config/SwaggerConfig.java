@@ -30,8 +30,8 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Your API Title")
-                .description("Your API Description")
+                .title("Train App")
+                .description("Train App API")
                 .version("1.0.0")
                 .build();
     }
