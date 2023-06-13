@@ -12,4 +12,6 @@ public interface TrainScheduleRepositoryPersistence {
      * @return
      */
     public Optional<TrainSchedule> getTrainSchedule(@NonNull final long TrainScheduleId);
+
+    Long DELETE_TRAIN_SCHEDULE_BY_IDS = Long.valueOf("DELETE_TRAIN_SCHEDULE_BY_IDS");
 }

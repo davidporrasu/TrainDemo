@@ -1,6 +1,7 @@
 package com.incofer.demo.persistence;
 
 import com.incofer.demo.entity.StationEntity;
+import com.incofer.demo.entity.TrainEntity;
 import com.incofer.demo.model.Station;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,21 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
         {
             log.info("Exiting StationRepositoryImpl with no Station {}", stationId);
             return Optional.empty();
+        }
+    }
+    /** Named query to delete trainConsist info by train Ids */
+    public void deleteByStationId(final long stationId)
+    {
+        log.trace("Station {} - Entered Station.delete()", stationId);
+
+        final StationEntity entity = entityManager.find(StationEntity.class, stationId);
+        if (entity != null)
+        {
+            entityManager.remove(entity);
+        }
+        else
+        {
+            log.trace("Station {} - No Station found for ", stationId);
         }
     }
 }

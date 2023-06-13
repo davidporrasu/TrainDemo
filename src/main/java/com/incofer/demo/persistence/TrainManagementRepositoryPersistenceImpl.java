@@ -53,4 +53,36 @@ public class TrainManagementRepositoryPersistenceImpl implements TrainManagement
             return Optional.empty();
         }
     }
+
+    /** Named query to delete trainConsist info by train Ids */
+
+    public void deleteByTrainManagementId(final long trainManagementId)
+    {
+        log.trace("TrainManagement {} - Entered TrainManagement.delete()", trainManagementId);
+
+        final TrainManagementEntity entity = entityManager.find(TrainManagementEntity.class, trainManagementId);
+        if (entity != null)
+        {
+            entityManager.remove(entity);
+        }
+        else
+        {
+            log.trace("TrainManagement {} - No TrainManagement found for ", trainManagementId);
+        }
+    }
+
+    public void deleteByTrainId(final long trainId)
+    {
+        log.trace("Train {} - Entered Train.delete()", trainId);
+
+        final TrainEntity entity = entityManager.find(TrainEntity.class, trainId);
+        if (entity != null)
+        {
+            entityManager.remove(entity);
+        }
+        else
+        {
+            log.trace("Train {} - No Train found for ", trainId);
+        }
+    }
 }

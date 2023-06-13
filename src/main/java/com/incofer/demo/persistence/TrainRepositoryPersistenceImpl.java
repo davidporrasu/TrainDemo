@@ -42,4 +42,20 @@ public class TrainRepositoryPersistenceImpl implements TrainRepositoryPersistenc
             return Optional.empty();
         }
     }
+    /** Named query to delete trainConsist info by train Ids */
+
+    public void deleteByTrainId(final long trainId)
+    {
+        log.trace("Train {} - Entered Train.delete()", trainId);
+
+        final TrainEntity entity = entityManager.find(TrainEntity.class, trainId);
+        if (entity != null)
+        {
+            entityManager.remove(entity);
+        }
+        else
+        {
+            log.trace("Train {} - No Train found for ", trainId);
+        }
+    }
 }

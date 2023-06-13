@@ -13,4 +13,6 @@ public interface StationRepositoryPersistence {
      * @return
      */
     public Optional<Station> getStation(@NonNull final long stationId);
+
+    Long DELETE_STATION_BY_IDS = Long.valueOf("DELETE_STATION_BY_IDS");
 }

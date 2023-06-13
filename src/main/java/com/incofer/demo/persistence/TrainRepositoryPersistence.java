@@ -12,4 +12,7 @@ public interface TrainRepositoryPersistence
      * @return
      */
     public Optional<Train> getTrain(@NonNull final long trainId);
+
+    /** Named query to delete trainConsist info by train Ids */
+    Long DELETE_TRAIN_BY_IDS = Long.valueOf("DELETE_TRAIN_BY_IDS");
 }

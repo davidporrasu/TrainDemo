@@ -1,5 +1,6 @@
 package com.incofer.demo.persistence;
 
+import com.incofer.demo.entity.TrainEntity;
 import com.incofer.demo.entity.TrainScheduleEntity;
 import com.incofer.demo.model.TrainSchedule;
 import lombok.NonNull;
@@ -41,5 +42,20 @@ public class TrainScheduleRepositoryPersistenceImpl implements TrainScheduleRepo
         }
     }
 
+    /** Named query to delete trainConsist info by train Ids */
 
+    public void deleteByTrainScheduleId(final long trainScheduleId)
+    {
+        log.trace("TrainSchedule {} - Entered TrainSchedule.delete()", trainScheduleId);
+
+        final TrainScheduleEntity entity = entityManager.find(TrainScheduleEntity.class, trainScheduleId);
+        if (entity != null)
+        {
+            entityManager.remove(entity);
+        }
+        else
+        {
+            log.trace("TrainSchedule {} - No TrainSchedule found for ", trainScheduleId);
+        }
+    }
 }
