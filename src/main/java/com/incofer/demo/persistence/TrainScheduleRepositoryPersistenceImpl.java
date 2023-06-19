@@ -2,6 +2,7 @@ package com.incofer.demo.persistence;
 
 import com.incofer.demo.entity.TrainEntity;
 import com.incofer.demo.entity.TrainScheduleEntity;
+import com.incofer.demo.model.Train;
 import com.incofer.demo.model.TrainSchedule;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -57,5 +58,27 @@ public class TrainScheduleRepositoryPersistenceImpl implements TrainScheduleRepo
         {
             log.trace("TrainSchedule {} - No TrainSchedule found for ", trainScheduleId);
         }
+    }
+
+    @Override
+    public boolean persistTrainSchedule(final TrainSchedule trainSchedule)
+    {
+        log.trace("TrainSchedule {} - Entered persistence.persistTrainSchedule()", trainSchedule.getId());
+
+        // See if this entity is already present
+        final Long trainScheduleId = trainSchedule.getId();
+        final TrainScheduleEntity managedEntity = entityManager.find(TrainScheduleEntity.class, trainScheduleId);
+        if (managedEntity == null)
+        {
+            // if not, create the entity and persist!
+            final TrainScheduleEntity newEntity = new TrainScheduleEntity(trainScheduleId, trainSchedule);
+            this.entityManager.persist(newEntity);
+        }
+        else
+        {
+            // if it is, just update the managed entity; (will be committed by JPA framework)
+            managedEntity.setTrainSchedule(trainSchedule);
+        }
+        return true;
     }
 }

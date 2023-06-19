@@ -85,4 +85,26 @@ public class TrainManagementRepositoryPersistenceImpl implements TrainManagement
             log.trace("Train {} - No Train found for ", trainId);
         }
     }
+
+    @Override
+    public boolean persistTrain(final Train train)
+    {
+        log.trace("Train {} - Entered persistence.persistTrain()", train.getId());
+
+        // See if this entity is already present
+        final Long trainId = train.getId();
+        final TrainEntity managedEntity = entityManager.find(TrainEntity.class, trainId);
+        if (managedEntity == null)
+        {
+            // if not, create the entity and persist!
+            final TrainEntity newEntity = new TrainEntity(trainId, train);
+            this.entityManager.persist(newEntity);
+        }
+        else
+        {
+            // if it is, just update the managed entity; (will be committed by JPA framework)
+            managedEntity.setTrain(train);
+        }
+        return true;
+    }
 }

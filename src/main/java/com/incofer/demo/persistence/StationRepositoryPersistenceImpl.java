@@ -3,6 +3,7 @@ package com.incofer.demo.persistence;
 import com.incofer.demo.entity.StationEntity;
 import com.incofer.demo.entity.TrainEntity;
 import com.incofer.demo.model.Station;
+import com.incofer.demo.model.Train;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,28 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
         {
             log.trace("Station {} - No Station found for ", stationId);
         }
+    }
+
+    @Override
+    public boolean persistStation(final Station station)
+    {
+        log.trace("Station {} - Entered persistence.persistStation()", station.getId());
+
+        // See if this entity is already present
+        final Long stationId = station.getId();
+        final StationEntity managedEntity = entityManager.find(StationEntity.class, stationId);
+        if (managedEntity == null)
+        {
+            // if not, create the entity and persist!
+            final StationEntity newEntity = new StationEntity(stationId, station);
+            this.entityManager.persist(newEntity);
+        }
+        else
+        {
+            // if it is, just update the managed entity; (will be committed by JPA framework)
+            managedEntity.setStation(station);
+        }
+        return true;
     }
 }
 
