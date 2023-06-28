@@ -2,6 +2,7 @@ package com.incofer.demo.persistence;
 
 import com.incofer.demo.entity.StationEntity;
 import com.incofer.demo.entity.TrainEntity;
+import com.incofer.demo.entity.TrainManagementEntity;
 import com.incofer.demo.model.Station;
 import com.incofer.demo.model.Train;
 import lombok.NonNull;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.Optional;
+
 
 @Repository
 @Slf4j
@@ -44,6 +46,7 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
         }
     }
     /** Named query to delete trainConsist info by train Ids */
+
     public void deleteByStationId(final long stationId)
     {
         log.trace("Station {} - Entered Station.delete()", stationId);
@@ -58,7 +61,6 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
             log.trace("Station {} - No Station found for ", stationId);
         }
     }
-
     @Override
     public boolean persistStation(final Station station)
     {
@@ -69,13 +71,13 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
         final StationEntity managedEntity = entityManager.find(StationEntity.class, stationId);
         if (managedEntity == null)
         {
-            // if not, create the entity and persist!
+
             final StationEntity newEntity = new StationEntity(stationId, station);
             this.entityManager.persist(newEntity);
         }
         else
         {
-            // if it is, just update the managed entity; (will be committed by JPA framework)
+
             managedEntity.setStation(station);
         }
         return true;

@@ -26,28 +26,27 @@ public class TrainScheduleResourceImpl
     @GetMapping("/search")
     public TrainSchedule searchSchedule(@RequestParam long id) throws Exception
     {
-        return this.trainScheduleService.findById(id);
+        return this.trainScheduleService.getTrainSchedule(id);
     }
     @PostMapping("/save")
-    public TrainSchedule save (@RequestBody final TrainSchedule trainSchedule) throws Exception
+    public TrainSchedule persistTrainSchedule(@RequestBody final TrainSchedule trainSchedule) throws Exception
     {
-        return this.trainScheduleService.save(trainSchedule);
+        this.trainScheduleService.persistTrainSchedule(trainSchedule);
+        return trainSchedule;
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteSchedule(@RequestParam long id) throws Exception
-    {
-        this.trainScheduleService.deleteSchedule(id);
-        return new ResponseEntity<>("Schedule deleted successfully", HttpStatus.OK);
-
+    public ResponseEntity<String> deleteByTrainScheduleId(@RequestParam long id) throws Exception {
+        this.trainScheduleService.deleteByTrainScheduleId(id);
+        return new ResponseEntity<>("TrainSchedule deleted successfully", HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateSchedule(@RequestParam Long id, @RequestBody TrainSchedule trainSchedule)
+    public ResponseEntity<?> persistTrainSchedule(@RequestParam Long id, @RequestBody TrainSchedule trainSchedule)
     {
         try
         {
-            this.trainScheduleService.updateSchedule(id, trainSchedule);
+            this.trainScheduleService.persistTrainSchedule(trainSchedule);
             return ResponseEntity.ok("Schedule updated successfully");
         }
         catch (Exception e)

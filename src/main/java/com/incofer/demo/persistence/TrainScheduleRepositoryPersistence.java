@@ -14,11 +14,11 @@ public interface TrainScheduleRepositoryPersistence {
      */
     public Optional<TrainSchedule> getTrainSchedule(@NonNull final long TrainScheduleId);
 
-    Long DELETE_TRAIN_SCHEDULE_BY_IDS = Long.valueOf("DELETE_TRAIN_SCHEDULE_BY_IDS");
+    public void deleteByTrainScheduleId(final long trainScheduleId);
 
     /**
      * Method to Create or Update CpTrainConsist in the database
      */
 
-    boolean persistTrainSchedule(TrainSchedule trainSchedule);
+    public boolean persistTrainSchedule(final TrainSchedule trainSchedule);
 }

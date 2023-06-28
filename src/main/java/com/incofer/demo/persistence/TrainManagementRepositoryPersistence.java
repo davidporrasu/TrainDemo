@@ -16,9 +16,8 @@ public interface TrainManagementRepositoryPersistence extends TrainRepositoryPer
     public Optional<TrainManagement> getTrainManagement(@NonNull final long trainManagementId);
     public Optional<Train> getTrain(@NonNull final long trainId);
 
-    /* en el trainManagementRepository hay dos variables que se borran y actualizan, train y trainManagement*/
-
     /** Named query to delete trainConsist info by train Ids */
-    Long DELETE_TRAIN_MANAGEMENT_BY_IDS = Long.valueOf("DELETE_TRAIN_MANAGEMENT_BY_IDS");
-    boolean persistTrain(Train train);
+    public void deleteByTrainManagementId(final long trainManagementId);
+
+    public boolean persistTrain(final Train train);
 }

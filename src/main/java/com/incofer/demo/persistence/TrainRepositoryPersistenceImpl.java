@@ -77,8 +77,8 @@ public class TrainRepositoryPersistenceImpl implements TrainRepositoryPersistenc
         {
             // if it is, just update the managed entity; (will be committed by JPA framework)
             managedEntity.setTrain(train);
-        }
-        return true;
+        }return true;
+
     }
 
 

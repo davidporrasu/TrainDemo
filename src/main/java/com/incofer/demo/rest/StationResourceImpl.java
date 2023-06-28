@@ -26,28 +26,27 @@ public class StationResourceImpl
     @GetMapping("/search")
     public Station searchStation(@RequestParam long id) throws Exception
     {
-        return this.stationService.findById(id);
+        return this.stationService.getStation(id);
     }
     @PostMapping("/save")
-    public Station save (@RequestBody final Station station) throws Exception
+    public Station persistStation(@RequestBody final Station station) throws Exception
     {
-        return this.stationService.save(station);
+        this.stationService.persistStation(station);
+        return station;
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteStation(@RequestParam long id) throws Exception
-    {
-        this.stationService.deleteStation(id);
-        return new ResponseEntity<>("Train deleted successfully", HttpStatus.OK);
-
+    public ResponseEntity<String> deleteByStationId(@RequestParam long id) throws Exception {
+        this.stationService.deleteByStationId(id);
+        return new ResponseEntity<>("Station deleted successfully", HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateStation(@RequestParam Long id, @RequestBody Station station)
+    public ResponseEntity<?> persistStation(@RequestParam Long id, @RequestBody Station station)
     {
         try
         {
-            this.stationService.updateStation(id, station);
+            this.stationService.persistStation(station);
             return ResponseEntity.ok("Station updated successfully");
         }
         catch (Exception e)

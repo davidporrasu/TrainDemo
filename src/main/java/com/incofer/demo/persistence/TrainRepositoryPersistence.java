@@ -14,11 +14,11 @@ public interface TrainRepositoryPersistence
    public Optional<Train> getTrain(@NonNull final long trainId);
 
     /** Named query to delete trainConsist info by train Ids */
-    Long DELETE_TRAIN_BY_IDS = Long.valueOf("DELETE_TRAIN_BY_IDS");
+    public void deleteByTrainId(final long trainId);
 
     /**
      * Method to Create or Update CpTrainConsist in the database
      */
 
-    boolean persistTrain(Train train);
+    public boolean persistTrain(final Train train);
 }

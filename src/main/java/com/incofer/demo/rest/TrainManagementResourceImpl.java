@@ -38,13 +38,14 @@ public class TrainManagementResourceImpl {
     }
 
     @PostMapping("/save")
-    public TrainManagement save(@RequestBody final TrainManagement trainManagement) throws Exception {
-        return this.trainManagementService.save(trainManagement);
+    public TrainManagement persistTrainManagement(@RequestBody final TrainManagement trainManagement) throws Exception {
+        this.trainManagementService.persistTrainManagement(trainManagement);
+        return trainManagement;
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteTrainManagement(@RequestParam long id) throws Exception {
-        this.trainManagementService.deleteTrainManagement(id);
+    public ResponseEntity<String> deleteByTrainManagementId(@RequestParam long id) throws Exception {
+        this.trainManagementService.deleteByTrainManagementId(id);
         return new ResponseEntity<>("TrainManagement deleted successfully", HttpStatus.OK);
     }
 

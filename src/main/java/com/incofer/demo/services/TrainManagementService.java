@@ -7,11 +7,15 @@ import com.incofer.demo.enums.Status;
 import com.incofer.demo.model.Station;
 import com.incofer.demo.model.TrainManagement;
 import com.incofer.demo.model.TrainSchedule;
+import com.incofer.demo.persistence.StationRepositoryPersistence;
+import com.incofer.demo.persistence.TrainScheduleRepositoryPersistence;
 import com.incofer.demo.persistence.repository.StationRepository;
 import com.incofer.demo.persistence.repository.TrainManagementRepository;
+import com.incofer.demo.persistence.TrainManagementRepositoryPersistence;
 import com.incofer.demo.persistence.repository.TrainScheduleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +27,20 @@ import java.util.Optional;
 @Service("trainManagementService")
 public class TrainManagementService
 {
+
+    /*-----------nuevo-----------*/
+    @Autowired
+    @Qualifier("trainScheduleRepositoryPersistenceImpl")
+    private TrainScheduleRepositoryPersistence trainScheduleRepositoryPersistence;
+    @Autowired
+    @Qualifier("stationRepositoryPersistenceImpl")
+    private StationRepositoryPersistence stationRepositoryPersistence;
+
+    @Autowired
+    @Qualifier("trainManagementRepositoryPersistenceImpl")
+    private TrainManagementRepositoryPersistence trainManagementRepositoryPersistence;
+    /*-----------nuevo-----------*/
+
     @Autowired
     private TrainManagementRepository trainManagementRepository;
     @Autowired
@@ -30,32 +48,30 @@ public class TrainManagementService
     @Autowired
     private TrainScheduleRepository trainScheduleRepository;
 
-    public TrainManagementService(TrainManagementRepository trainManagementRepository)
+    public TrainManagementService(TrainManagementRepositoryPersistence trainManagementRepositoryPersistence)
     {
-        this.trainManagementRepository = trainManagementRepository;
+        this.trainManagementRepositoryPersistence = trainManagementRepositoryPersistence;
     }
 
-    public TrainManagement findById(final long id)
-    {
-        TrainManagementEntity entity = this.trainManagementRepository.getById(id);
-        return entity.getTrainManagement();
+    public TrainManagement getTrainManagement(final long id) {
+        Optional<TrainManagement> optionalTrainManagement = this.trainManagementRepositoryPersistence.getTrainManagement(id);
+        return optionalTrainManagement.get();
+    }
+    public TrainManagement deleteByTrainManagementId(long trainManagementId) {
+        log.trace("TrainManagement {} - Entered TrainManagement.deleteByTrainManagementId()", trainManagementId);
+        this.trainManagementRepositoryPersistence.deleteByTrainManagementId(trainManagementId);
+        return null;
     }
 
-    @Transactional
-    public TrainManagement save(final TrainManagement save)
-    {
-        TrainManagementEntity trainManagementEntity = TrainManagementEntity.builder()
-                .trainManagement(save)
-                .build();
-        return this.trainManagementRepository.save(trainManagementEntity).getTrainManagement();
+    public TrainManagement persistTrainManagement(TrainManagement trainManagement) {
+        log.trace("TrainManagement {} - Entered persistence.persistTrainManagement()", trainManagement.getId());
+        final Long trainManagementId = trainManagement.getId();
+        return null;
     }
 
-    @Transactional
-    public void deleteTrainManagement(final long id)
-    {
-        this.trainManagementRepository.deleteTrainManagement(id);
-    }
 
+
+/*revisar si es necesario*/
     public Station getCurrentStation(long trainManagementId)
     {
         log.info("Start getCurrentStation id {}", trainManagementId);

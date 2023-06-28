@@ -1,60 +1,39 @@
 package com.incofer.demo.services;
 
-import com.incofer.demo.entity.TrainScheduleEntity;
 import com.incofer.demo.model.TrainSchedule;
-import com.incofer.demo.persistence.repository.TrainScheduleRepository;
+import com.incofer.demo.persistence.TrainScheduleRepositoryPersistence;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+@Slf4j
 
 @Service("trainScheduleService")
 public class TrainScheduleService
 {
+
     @Autowired
-    private TrainScheduleRepository trainScheduleRepository;
+    @Qualifier("trainScheduleRepositoryPersistenceImpl")
+    private TrainScheduleRepositoryPersistence trainScheduleRepositoryPersistence;
 
-    public TrainSchedule findById(final long id)
-    {
-        TrainScheduleEntity entity = this.trainScheduleRepository.getById(id);
-        return entity.getTrainSchedule();
+    public TrainSchedule getTrainSchedule(final long id) {
+        Optional<TrainSchedule> optionalTrainSchedule = this.trainScheduleRepositoryPersistence.getTrainSchedule(id);
+        return optionalTrainSchedule.get();
+    }
+    public TrainSchedule deleteByTrainScheduleId(long trainScheduleId) {
+        log.trace("TrainSchedule {} - Entered TrainSchedule.deleteByTrainScheduleId()", trainScheduleId);
+        this.trainScheduleRepositoryPersistence.deleteByTrainScheduleId(trainScheduleId);
+        return null;
     }
 
-    @Transactional
-    public void deleteSchedule(final long id)
-    {
-        this.trainScheduleRepository.deleteSchedule(id);
+    public TrainSchedule persistTrainSchedule(TrainSchedule trainSchedule) {
+        log.trace("TrainSchedule {} - Entered persistence.persistTrainSchedule()", trainSchedule.getId());
+        final Long trainScheduleId = trainSchedule.getId();
+        return null;
     }
 
-    @Transactional
-    public TrainSchedule save(final TrainSchedule save)
-    {
-        TrainScheduleEntity trainScheduleEntity = TrainScheduleEntity.builder()
-                .trainSchedule(save)
-                .build();
-        return this.trainScheduleRepository.save(trainScheduleEntity).getTrainSchedule();
-    }
 
-    public TrainSchedule updateSchedule(final long id, TrainSchedule updateSchedule) throws Exception
-    {
-        Optional<TrainScheduleEntity> optionalTrainSchedule = trainScheduleRepository.findById(id);
-        if (optionalTrainSchedule.isPresent())
-        {
-            TrainScheduleEntity existingTrainScheduleEntity = optionalTrainSchedule.get();
-            existingTrainScheduleEntity.setTrainSchedule(updateSchedule);
 
-            TrainScheduleEntity saveTrainSchedule = trainScheduleRepository.save(existingTrainScheduleEntity);
-            return saveTrainSchedule.getTrainSchedule();
-        }
-        else
-        {
-            throw new Exception("\"No train schedule found with ID: " + id);
-        }
-    }
-
-    public TrainScheduleEntity getById(final long id)
-    {
-        return this.trainScheduleRepository.getById(id);
-    }
 }

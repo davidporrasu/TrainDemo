@@ -1,64 +1,36 @@
 package com.incofer.demo.services;
 
-import com.incofer.demo.entity.TrainEntity;
 import com.incofer.demo.model.Train;
 import com.incofer.demo.persistence.TrainRepositoryPersistence;
-import com.incofer.demo.persistence.repository.TrainRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
+@Slf4j
 @Service("trainService")
 public class TrainService
 {
     @Autowired
-    private TrainRepository trainRepository;
-
-    @Autowired
     @Qualifier("trainRepositoryPersistenceImpl")
     private TrainRepositoryPersistence trainRepositoryPersistence;
 
-    public Train findById(final long id)
-    {
+
+    public Train getTrain(final long id) {
         Optional<Train> optionalTrain = this.trainRepositoryPersistence.getTrain(id);
         return optionalTrain.get();
     }
-
-    @Transactional
-    public void deleteTrain(final long id)
-    {
-        this.trainRepository.deleteTrain(id);
+    public Train deleteByTrainId(long trainId) {
+    log.trace("Train {} - Entered Train.deleteByTrainId()", trainId);
+    this.trainRepositoryPersistence.deleteByTrainId(trainId);
+        return null;
     }
 
-
-    @Transactional
-    public Train save(final Train save)
-    {
-        TrainEntity trainEntity = TrainEntity.builder()
-                .train(save)
-                .build();
-        return this.trainRepository.save(trainEntity).getTrain();
-    }
-
-    public Train updateTrain(final long id, Train updateTrain) throws Exception
-    {
-        Optional<TrainEntity> optionalTrain = trainRepository.findById(id);
-        if (optionalTrain.isPresent())
-        {
-            TrainEntity existingTrainENtity = optionalTrain.get();
-            //existingTrainENtity.setId(updateTrain.getId());
-            existingTrainENtity.setTrain(updateTrain);
-
-            TrainEntity saveTrain = trainRepository.save(existingTrainENtity);
-            return saveTrain.getTrain();
-        }
-        else
-        {
-            throw new Exception("\"No train found with ID: " + id);
-        }
+    public Train persistTrain(Train train) {
+        log.trace("Train {} - Entered persistence.persistTrain()", train.getId());
+        final Long trainId = train.getId();
+        return null;
     }
 }
 
