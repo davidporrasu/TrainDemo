@@ -11,10 +11,11 @@ public interface TrainRepositoryPersistence
      * @param trainId
      * @return
      */
-   public Optional<Train> getTrain(@NonNull final long trainId);
+
+   public Optional<Train> getTrain(@NonNull final String trainId);
 
     /** Named query to delete trainConsist info by train Ids */
-    public void deleteByTrainId(final long trainId);
+    public void deleteByTrainId(final String trainId);
 
     /**
      * Method to Create or Update CpTrainConsist in the database
@@ -22,3 +23,4 @@ public interface TrainRepositoryPersistence
 
     public boolean persistTrain(final Train train);
 }
+

@@ -15,7 +15,7 @@ public interface TrainRepository extends JpaRepository<TrainEntity, Long>
     @Transactional
     @Modifying
     @Query("DELETE FROM TrainEntity t WHERE t.id = :id")
-    void deleteTrain(long id);
+    void deleteTrain(String id);
 
     @Override
     TrainEntity getById(Long aLong);
@@ -23,7 +23,5 @@ public interface TrainRepository extends JpaRepository<TrainEntity, Long>
     @Transactional
     @Modifying
     @Query("UPDATE TrainEntity t SET t.train = :train WHERE t.id = :id")
-    void updateTrain(long id, TrainEntity train);
+    Train updateTrain(String id, TrainEntity train);
 }
-
-

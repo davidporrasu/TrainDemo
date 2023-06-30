@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 @Slf4j
@@ -16,21 +17,24 @@ public class TrainService
     @Qualifier("trainRepositoryPersistenceImpl")
     private TrainRepositoryPersistence trainRepositoryPersistence;
 
-
-    public Train getTrain(final long id) {
+    public Train getTrain(final String id)
+    {
         Optional<Train> optionalTrain = this.trainRepositoryPersistence.getTrain(id);
         return optionalTrain.get();
     }
-    public Train deleteByTrainId(long trainId) {
-    log.trace("Train {} - Entered Train.deleteByTrainId()", trainId);
-    this.trainRepositoryPersistence.deleteByTrainId(trainId);
-        return null;
+
+    @Transactional
+    public void deleteTrain(final String id)
+    {
+        this.trainRepositoryPersistence.deleteByTrainId(id);
     }
 
-    public Train persistTrain(Train train) {
-        log.trace("Train {} - Entered persistence.persistTrain()", train.getId());
-        final Long trainId = train.getId();
-        return null;
+    @Transactional
+    public boolean persistTrain(final Train save)
+    {
+        return this.trainRepositoryPersistence.persistTrain(save);
     }
+
 }
+
 

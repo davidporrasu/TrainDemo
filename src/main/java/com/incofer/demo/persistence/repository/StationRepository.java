@@ -23,5 +23,6 @@ public interface StationRepository extends JpaRepository<StationEntity, Long>
     @Modifying
     @Query("UPDATE StationEntity t SET t.station = :station WHERE t.id = :id")
     void updateStation(long id, StationEntity station);
+
 }
 

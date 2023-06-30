@@ -2,7 +2,6 @@ package com.incofer.demo.persistence;
 
 import com.incofer.demo.entity.TrainEntity;
 import com.incofer.demo.model.Train;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,7 +26,7 @@ public class TrainRepositoryPersistenceImpl implements TrainRepositoryPersistenc
      * @param trainId
      * @return
      */
-    public Optional<Train> getTrain(@NonNull final long trainId)
+    public Optional<Train> getTrain(final String trainId)
     {
         log.info("In TrainRepositoryImpl getTrain {}", trainId);
         final TrainEntity trainEntity = this.entityManager.find(TrainEntity.class, trainId);
@@ -44,7 +43,7 @@ public class TrainRepositoryPersistenceImpl implements TrainRepositoryPersistenc
     }
     /** Named query to delete trainConsist info by train Ids */
 
-    public void deleteByTrainId(final long trainId)
+    public void deleteByTrainId(final String trainId)
     {
         log.trace("Train {} - Entered Train.delete()", trainId);
 
@@ -65,7 +64,7 @@ public class TrainRepositoryPersistenceImpl implements TrainRepositoryPersistenc
         log.trace("Train {} - Entered persistence.persistTrain()", train.getId());
 
         // See if this entity is already present
-        final Long trainId = train.getId();
+        final String trainId = train.getId();
         final TrainEntity managedEntity = entityManager.find(TrainEntity.class, trainId);
         if (managedEntity == null)
         {
@@ -77,9 +76,7 @@ public class TrainRepositoryPersistenceImpl implements TrainRepositoryPersistenc
         {
             // if it is, just update the managed entity; (will be committed by JPA framework)
             managedEntity.setTrain(train);
-        }return true;
-
+        }
+        return true;
     }
-
-
 }

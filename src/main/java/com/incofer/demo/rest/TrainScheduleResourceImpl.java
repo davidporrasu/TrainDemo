@@ -28,7 +28,7 @@ public class TrainScheduleResourceImpl
     {
         return this.trainScheduleService.getTrainSchedule(id);
     }
-    @PostMapping("/save")
+    @PostMapping("/persistTrainSchedule")
     public TrainSchedule persistTrainSchedule(@RequestBody final TrainSchedule trainSchedule) throws Exception
     {
         this.trainScheduleService.persistTrainSchedule(trainSchedule);
@@ -36,7 +36,8 @@ public class TrainScheduleResourceImpl
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteByTrainScheduleId(@RequestParam long id) throws Exception {
+    public ResponseEntity<String> deleteByTrainScheduleId(@RequestParam long id) throws Exception
+    {
         this.trainScheduleService.deleteByTrainScheduleId(id);
         return new ResponseEntity<>("TrainSchedule deleted successfully", HttpStatus.OK);
     }

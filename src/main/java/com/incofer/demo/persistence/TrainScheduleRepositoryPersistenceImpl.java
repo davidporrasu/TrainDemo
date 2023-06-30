@@ -1,8 +1,6 @@
 package com.incofer.demo.persistence;
 
-import com.incofer.demo.entity.TrainEntity;
 import com.incofer.demo.entity.TrainScheduleEntity;
-import com.incofer.demo.model.Train;
 import com.incofer.demo.model.TrainSchedule;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +40,6 @@ public class TrainScheduleRepositoryPersistenceImpl implements TrainScheduleRepo
             return Optional.empty();
         }
     }
-
     /** Named query to delete trainConsist info by train Ids */
 
     public void deleteByTrainScheduleId(final long trainScheduleId)
@@ -66,12 +63,12 @@ public class TrainScheduleRepositoryPersistenceImpl implements TrainScheduleRepo
         log.trace("TrainSchedule {} - Entered persistence.persistTrainSchedule()", trainSchedule.getId());
 
         // See if this entity is already present
-        final Long trainScheduleId = trainSchedule.getId();
+        final long trainScheduleId = trainSchedule.getId();
         final TrainScheduleEntity managedEntity = entityManager.find(TrainScheduleEntity.class, trainScheduleId);
         if (managedEntity == null)
         {
             // if not, create the entity and persist!
-            final TrainScheduleEntity newEntity = new TrainScheduleEntity(trainScheduleId, trainSchedule);
+            final TrainScheduleEntity newEntity = TrainScheduleEntity.builder().trainSchedule(trainSchedule).build();
             this.entityManager.persist(newEntity);
         }
         else

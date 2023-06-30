@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 @Slf4j
@@ -13,27 +14,27 @@ import java.util.Optional;
 @Service("trainScheduleService")
 public class TrainScheduleService
 {
-
     @Autowired
     @Qualifier("trainScheduleRepositoryPersistenceImpl")
     private TrainScheduleRepositoryPersistence trainScheduleRepositoryPersistence;
 
-    public TrainSchedule getTrainSchedule(final long id) {
+    public TrainSchedule getTrainSchedule(final long id)
+    {
         Optional<TrainSchedule> optionalTrainSchedule = this.trainScheduleRepositoryPersistence.getTrainSchedule(id);
         return optionalTrainSchedule.get();
     }
-    public TrainSchedule deleteByTrainScheduleId(long trainScheduleId) {
+    @Transactional
+    public TrainSchedule deleteByTrainScheduleId(long trainScheduleId)
+    {
         log.trace("TrainSchedule {} - Entered TrainSchedule.deleteByTrainScheduleId()", trainScheduleId);
         this.trainScheduleRepositoryPersistence.deleteByTrainScheduleId(trainScheduleId);
         return null;
     }
 
-    public TrainSchedule persistTrainSchedule(TrainSchedule trainSchedule) {
+    @Transactional
+    public boolean persistTrainSchedule(TrainSchedule trainSchedule)
+    {
         log.trace("TrainSchedule {} - Entered persistence.persistTrainSchedule()", trainSchedule.getId());
-        final Long trainScheduleId = trainSchedule.getId();
-        return null;
+        return this.trainScheduleRepositoryPersistence.persistTrainSchedule(trainSchedule);
     }
-
-
-
 }

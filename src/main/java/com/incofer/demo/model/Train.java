@@ -2,7 +2,6 @@ package com.incofer.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.incofer.demo.entity.TrainEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,7 +34,7 @@ public class Train
         /**
          * Train id
          */
-        private long id;
+        private String id;
         /**
          * Train name
          */
@@ -64,7 +63,6 @@ public class Train
          * Velocity
          */
         private float velocity;
-
 
 }
 

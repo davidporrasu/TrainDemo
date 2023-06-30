@@ -14,11 +14,13 @@ import java.util.Optional;
 
 @Repository
 @Slf4j
-public class TrainManagementRepositoryPersistenceImpl implements TrainManagementRepositoryPersistence {
+public class TrainManagementRepositoryPersistenceImpl implements TrainManagementRepositoryPersistence
+{
     private final EntityManager entityManager;
 
     @Autowired
-    public TrainManagementRepositoryPersistenceImpl(EntityManager entityManager) {
+    public TrainManagementRepositoryPersistenceImpl(EntityManager entityManager)
+    {
         this.entityManager = entityManager;
     }
 
@@ -30,15 +32,14 @@ public class TrainManagementRepositoryPersistenceImpl implements TrainManagement
         {
             log.info("ExitingTrainManagementRepositoryImpl with TrainManagement {}", trainManagementId);
             return Optional.of(trainManagementEntity.getTrainManagement());
-        }
-        else
+        } else
         {
             log.info("Exiting TrainManagementRepositoryImpl with no TrainManagement {}", trainManagementId);
             return Optional.empty();
         }
     }
 
-    public Optional<Train> getTrain(@NonNull final long trainId)
+    public Optional<Train> getTrain(final String trainId)
     {
         log.info("In TrainRepositoryImpl getTrain {}", trainId);
         final TrainEntity trainEntity = this.entityManager.find(TrainEntity.class, trainId);
@@ -46,15 +47,16 @@ public class TrainManagementRepositoryPersistenceImpl implements TrainManagement
         {
             log.info("ExitingTrainRepositoryImpl with Train {}", trainId);
             return Optional.of(trainEntity.getTrain());
-        }
-        else
+        } else
         {
             log.info("Exiting TrainRepositoryImpl with no Train {}", trainId);
             return Optional.empty();
         }
     }
 
-    /** Named query to delete trainConsist info by train Ids */
+    /**
+     * Named query to delete trainConsist info by train Ids
+     */
 
     public void deleteByTrainManagementId(final long trainManagementId)
     {
@@ -64,8 +66,7 @@ public class TrainManagementRepositoryPersistenceImpl implements TrainManagement
         if (entity != null)
         {
             entityManager.remove(entity);
-        }
-        else
+        } else
         {
             log.trace("TrainManagement {} - No TrainManagement found for ", trainManagementId);
         }
@@ -79,33 +80,30 @@ public class TrainManagementRepositoryPersistenceImpl implements TrainManagement
         if (entity != null)
         {
             entityManager.remove(entity);
-        }
-        else
+        } else
         {
             log.trace("Train {} - No Train found for ", trainId);
         }
     }
 
-    @Override
-    public boolean persistTrain(final Train train)
+    public boolean persistTrainManagement(@NonNull final TrainManagement trainManagement)
     {
-        log.trace("Train {} - Entered persistence.persistTrain()", train.getId());
+        log.trace("TrainManagement {} - Entered persistence.persistTrainManagement()", trainManagement.getId());
 
         // See if this entity is already present
-        final Long trainId = train.getId();
-        final TrainEntity managedEntity = entityManager.find(TrainEntity.class, trainId);
+        final long trainManagementId = trainManagement.getId();
+        final TrainManagementEntity managedEntity = entityManager.find(TrainManagementEntity.class, trainManagementId);
+
         if (managedEntity == null)
         {
-            // if not, create the entity and persist!
-            final TrainEntity newEntity = new TrainEntity(trainId, train);
+            final TrainManagementEntity newEntity = new TrainManagementEntity();
+            newEntity.setTrainManagement(trainManagement);
             this.entityManager.persist(newEntity);
         }
         else
         {
-            // if it is, just update the managed entity; (will be committed by JPA framework)
-            managedEntity.setTrain(train);
-        }return true;
-
-
+            managedEntity.setTrainManagement(trainManagement);
+        }
+        return true;
     }
 }

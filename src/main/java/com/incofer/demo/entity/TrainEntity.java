@@ -12,8 +12,6 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -30,8 +28,7 @@ public class TrainEntity implements Serializable
 {
         private static final long serialVersionUID = 1L;
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private long id;
+        private String id;
         @Type(type = "json")
         @Column(name = "trainObject", columnDefinition = "json")
         private Train train;

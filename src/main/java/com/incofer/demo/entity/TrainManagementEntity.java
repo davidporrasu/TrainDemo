@@ -23,7 +23,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Builder
-@Table(name = "trainManagement")
+@Table(name = "train_management")
 @TypeDef(name = "json", typeClass = JsonType.class)
 public class TrainManagementEntity
 {
