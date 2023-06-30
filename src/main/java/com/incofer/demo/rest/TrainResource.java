@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Resource class for Identify Train
+ * Resource class for Identify Train comment
  */
 @RequestMapping("/trains")
 public interface TrainResource
