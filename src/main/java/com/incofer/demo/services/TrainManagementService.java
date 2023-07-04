@@ -75,7 +75,7 @@ public class TrainManagementService
     @Transactional
     public Station getCurrentStation(long trainManagementId)
     {
-        log.info("Start getCurrentStation id {}", trainManagementId);
+        log.info("Start getCurrentStationn id {}", trainManagementId);
 
         Optional<TrainManagementEntity> optionalTrainManagementEntity = this.trainManagementRepository.findById(trainManagementId);
 
