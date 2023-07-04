@@ -86,7 +86,7 @@ public class TrainManagementService
             TrainSchedule trainSchedule = trainScheduleRepository.findById(trainManagementEntity.getTrainManagement().getTrainScheduleId())
                     .orElseThrow(() ->
                     {
-                        String errorMessage = "TrainSchedule not found for TrainManagement ID: " + trainManagementId;
+                        String errorMessage = "TrainSchedulee not found for TrainManagement ID: " + trainManagementId;
                         log.error(errorMessage);
                         throw new IllegalArgumentException(errorMessage);
                     }).getTrainSchedule();
