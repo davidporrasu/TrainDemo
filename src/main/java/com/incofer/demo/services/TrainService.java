@@ -1,7 +1,7 @@
 package com.incofer.demo.services;
 
 import com.incofer.demo.model.Train;
-import com.incofer.demo.persistence.TrainRepositoryPersistence;
+import com.incofer.demo.persistence.TrainPersistence;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,27 +14,26 @@ import java.util.Optional;
 public class TrainService
 {
     @Autowired
-    @Qualifier("trainRepositoryPersistenceImpl")
-    private TrainRepositoryPersistence trainRepositoryPersistence;
+    @Qualifier("trainPersistenceImpl")
+    private TrainPersistence trainPersistence;
 
     public Train getTrain(final String id)
     {
-        Optional<Train> optionalTrain = this.trainRepositoryPersistence.getTrain(id);
+        Optional<Train> optionalTrain = this.trainPersistence.getTrain(id);
         return optionalTrain.get();
     }
 
     @Transactional
     public void deleteTrain(final String id)
     {
-        this.trainRepositoryPersistence.deleteByTrainId(id);
+        this.trainPersistence.deleteByTrainId(id);
     }
 
     @Transactional
     public boolean persistTrain(final Train save)
     {
-        return this.trainRepositoryPersistence.persistTrain(save);
+        return this.trainPersistence.persistTrain(save);
     }
-
 }
 
 

@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 @Repository
-public interface TrainManagementRepositoryPersistence{
+public interface TrainManagementPersistence
+{
     /**
      * GetTrainManagement
      * @param trainManagementId

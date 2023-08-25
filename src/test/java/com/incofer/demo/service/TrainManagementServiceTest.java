@@ -1,13 +1,14 @@
 package com.incofer.demo.service;
 
 import com.incofer.demo.model.Station;
-import com.incofer.demo.persistence.TrainManagementRepositoryPersistenceImpl;
+import com.incofer.demo.persistence.TrainManagementPersistenceImpl;
 import com.incofer.demo.services.TrainManagementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -18,10 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class TrainManagementServiceTest
 {
-    @Mock
-    private TrainManagementRepositoryPersistenceImpl trainManagementRepositoryPersistenceImpl;
-
     @Autowired
+    @Qualifier("trainManagementService")
     private TrainManagementService trainManagementService;
 
     @BeforeEach
@@ -42,7 +41,7 @@ public class TrainManagementServiceTest
         stations.add(station3);
         stations.add(station4);
         stations.add(station5);
-        int result = TrainManagementService.getAdvancedKm(stations, station5, false);
+        int result = trainManagementService.getAdvancedKm(stations, station5, false);
         assertEquals(50, result);
     }
 
@@ -60,7 +59,7 @@ public class TrainManagementServiceTest
         stations.add(station3);
         stations.add(station4);
         stations.add(station5);
-        int result = TrainManagementService.getAdvancedKm(stations, station3, false);
+        int result = trainManagementService.getAdvancedKm(stations, station3, false);
         assertEquals(15, result);
     }
 
@@ -78,7 +77,7 @@ public class TrainManagementServiceTest
         stations.add(station3);
         stations.add(station4);
         stations.add(station5);
-        int result = TrainManagementService.getAdvancedKm(stations, station3, true);
+        int result = trainManagementService.getAdvancedKm(stations, station3, true);
         assertEquals(85, result);
     }
 
@@ -96,7 +95,7 @@ public class TrainManagementServiceTest
         stations.add(station3);
         stations.add(station4);
         stations.add(station5);
-        int result = TrainManagementService.getAdvancedKm(stations, station2, true);
+        int result = trainManagementService.getAdvancedKm(stations, station2, true);
         assertEquals(95, result);
     }
 
@@ -114,7 +113,7 @@ public class TrainManagementServiceTest
         stations.add(station3);
         stations.add(station4);
         stations.add(station5);
-        int result = TrainManagementService.getAdvancedKm(stations, station1, true);
+        int result = trainManagementService.getAdvancedKm(stations, station1, true);
         assertEquals(100, result);
     }
     @Test
@@ -131,7 +130,7 @@ public class TrainManagementServiceTest
         stations.add(station3);
         stations.add(station2);
         stations.add(station1);
-        int result = TrainManagementService.getAdvancedKm(stations, station1, true);
+        int result = trainManagementService.getAdvancedKm(stations, station1, true);
         assertEquals(80, result);
     }
 

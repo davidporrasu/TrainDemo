@@ -1,8 +1,7 @@
 package com.incofer.demo.services;
 
 import com.incofer.demo.model.Station;
-import com.incofer.demo.model.TrainSchedule;
-import com.incofer.demo.persistence.StationRepositoryPersistence;
+import com.incofer.demo.persistence.StationPersistence;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,28 +14,27 @@ import java.util.Optional;
 public class StationService
 {
     @Autowired
-    @Qualifier("stationRepositoryPersistenceImpl")
-    private StationRepositoryPersistence stationRepositoryPersistence;
+    @Qualifier("stationPersistenceImpl")
+    private StationPersistence stationPersistence;
 
 
     public Station getStation(final long id)
     {
-        Optional<Station> optionalStation = this.stationRepositoryPersistence.getStation(id);
+        Optional<Station> optionalStation = this.stationPersistence.getStation(id);
         return optionalStation.get();
     }
     @Transactional
-    public TrainSchedule deleteByStationId(long stationId)
+    public Station deleteByStationId(long stationId)
     {
         log.trace("Station {} - Entered Station.deleteByStationId()", stationId);
-        this.stationRepositoryPersistence.deleteByStationId(stationId);
-        return null;
+        //this.stationRepositoryPersistence.deleteByStationId(stationId);
+        return this.stationPersistence.deleteByStationId(stationId);
     }
 
     public Station persistStation(Station station)
     {
         log.trace("Station {} - Entered persistence.persistStation()", station.getId());
-        final Long stationId = station.getId();
-        return null;
+        return this.stationPersistence.persistStation(station);
     }
 }
 

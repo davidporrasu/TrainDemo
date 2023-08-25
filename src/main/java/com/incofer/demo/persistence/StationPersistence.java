@@ -5,8 +5,8 @@ import lombok.NonNull;
 
 import java.util.Optional;
 
-public interface StationRepositoryPersistence {
-
+public interface StationPersistence
+{
     /**
      * GetStation
      *
@@ -15,8 +15,9 @@ public interface StationRepositoryPersistence {
      */
     public Optional<Station> getStation(@NonNull final long stationId);
 
-    public void deleteByStationId(final long stationId);
+    public Station deleteByStationId(final long stationId);
 
-    public boolean persistStation(final Station station);
-   /* StationEntity persistTrain(Station station);*/
+    public Station persistStation(@NonNull final Station station);
+   /* StationEntity persistStation(Station station);*/
 }
+

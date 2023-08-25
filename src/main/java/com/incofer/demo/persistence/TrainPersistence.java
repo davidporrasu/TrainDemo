@@ -4,7 +4,7 @@ import com.incofer.demo.model.Train;
 import lombok.NonNull;
 
 import java.util.Optional;
-public interface TrainRepositoryPersistence
+public interface TrainPersistence
 {
     /**
      * GetTrain

@@ -34,4 +34,11 @@ public class Station
     private City city;
     private int km;
     List<ActivityType> activityTypes;
+
+    public Station City;
+
+
+
+
+
 }

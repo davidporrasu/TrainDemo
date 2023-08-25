@@ -1,5 +1,7 @@
 package com.incofer.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +13,16 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 @Builder
-public class Passenger extends Person
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder({
+        "id",
+        "name"
+})
+
+public class Passenger
 {
-    private int ticketNumber;
-    private boolean suitcase;
+    private String id;
+    private String name;
 }
 
 

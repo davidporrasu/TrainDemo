@@ -5,7 +5,7 @@ import lombok.NonNull;
 
 import java.util.Optional;
 
-public interface TrainScheduleRepositoryPersistence
+public interface TrainSchedulePersistence
 {
     /**
      * GetTrainSchedule

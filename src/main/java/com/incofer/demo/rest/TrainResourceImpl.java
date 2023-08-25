@@ -14,11 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/trains")
-
 public class TrainResourceImpl implements TrainResource
 {
     @Autowired
-
     @Qualifier("trainService")
     private TrainService trainService;
 

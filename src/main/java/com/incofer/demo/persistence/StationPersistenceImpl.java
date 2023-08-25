@@ -1,10 +1,7 @@
 package com.incofer.demo.persistence;
 
 import com.incofer.demo.entity.StationEntity;
-import com.incofer.demo.entity.TrainEntity;
-import com.incofer.demo.entity.TrainManagementEntity;
 import com.incofer.demo.model.Station;
-import com.incofer.demo.model.Train;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +11,17 @@ import javax.persistence.EntityManager;
 import java.util.Optional;
 
 
-@Repository
+@Repository("stationPersistenceImpl")
 @Slf4j
-public class StationRepositoryPersistenceImpl implements StationRepositoryPersistence
+public class StationPersistenceImpl implements StationPersistence
 {
+
+
     private final EntityManager entityManager;
 
     @Autowired
-    public StationRepositoryPersistenceImpl(EntityManager entityManager) {
+    public StationPersistenceImpl(EntityManager entityManager)
+    {
         this.entityManager = entityManager;
     }
 
@@ -33,7 +33,7 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
     public Optional<Station> getStation(@NonNull final long stationId)
     {
         log.info("In StationRepositoryImpl getStation {}", stationId);
-        final StationEntity stationEntity = this.entityManager.find(StationEntity.class, stationId);
+        final StationEntity stationEntity = this.entityManager.find(com.incofer.demo.entity.StationEntity.class, stationId);
         if (stationEntity != null)
         {
             log.info("ExitingStationRepositoryImpl with Station {}", stationId);
@@ -45,9 +45,13 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
             return Optional.empty();
         }
     }
-    /** Named query to delete trainConsist info by train Ids */
+    /**
+     * Named query to delete trainConsist info by train Ids
+     *
+     * @return
+     */
 
-    public void deleteByStationId(final long stationId)
+    public Station deleteByStationId(final long stationId)
     {
         log.trace("Station {} - Entered Station.delete()", stationId);
 
@@ -60,14 +64,15 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
         {
             log.trace("Station {} - No Station found for ", stationId);
         }
+        return null;
     }
     @Override
-    public boolean persistStation(final Station station)
+    public Station persistStation(final Station station)
     {
         log.trace("Station {} - Entered persistence.persistStation()", station.getId());
 
         // See if this entity is already present
-        final Long stationId = station.getId();
+        final long stationId = station.getId();
         final StationEntity managedEntity = entityManager.find(StationEntity.class, stationId);
         if (managedEntity == null)
         {
@@ -80,7 +85,7 @@ public class StationRepositoryPersistenceImpl implements StationRepositoryPersis
 
             managedEntity.setStation(station);
         }
-        return true;
+        return persistStation(station);
     }
 }
 

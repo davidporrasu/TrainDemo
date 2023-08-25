@@ -1,7 +1,7 @@
 package com.incofer.demo.services;
 
 import com.incofer.demo.model.TrainSchedule;
-import com.incofer.demo.persistence.TrainScheduleRepositoryPersistence;
+import com.incofer.demo.persistence.TrainSchedulePersistence;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,19 +15,20 @@ import java.util.Optional;
 public class TrainScheduleService
 {
     @Autowired
-    @Qualifier("trainScheduleRepositoryPersistenceImpl")
-    private TrainScheduleRepositoryPersistence trainScheduleRepositoryPersistence;
+    @Qualifier("trainSchedulePersistenceImpl")
+    private TrainSchedulePersistence trainSchedulePersistence;
+
 
     public TrainSchedule getTrainSchedule(final long id)
     {
-        Optional<TrainSchedule> optionalTrainSchedule = this.trainScheduleRepositoryPersistence.getTrainSchedule(id);
+        Optional<TrainSchedule> optionalTrainSchedule = this.trainSchedulePersistence.getTrainSchedule(id);
         return optionalTrainSchedule.get();
     }
     @Transactional
     public TrainSchedule deleteByTrainScheduleId(long trainScheduleId)
     {
         log.trace("TrainSchedule {} - Entered TrainSchedule.deleteByTrainScheduleId()", trainScheduleId);
-        this.trainScheduleRepositoryPersistence.deleteByTrainScheduleId(trainScheduleId);
+        this.trainSchedulePersistence.deleteByTrainScheduleId(trainScheduleId);
         return null;
     }
 
@@ -35,6 +36,6 @@ public class TrainScheduleService
     public boolean persistTrainSchedule(TrainSchedule trainSchedule)
     {
         log.trace("TrainSchedule {} - Entered persistence.persistTrainSchedule()", trainSchedule.getId());
-        return this.trainScheduleRepositoryPersistence.persistTrainSchedule(trainSchedule);
+        return this.trainSchedulePersistence.persistTrainSchedule(trainSchedule);
     }
 }

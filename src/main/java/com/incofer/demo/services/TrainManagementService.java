@@ -1,18 +1,13 @@
 package com.incofer.demo.services;
 
-import com.incofer.demo.entity.StationEntity;
-import com.incofer.demo.entity.TrainManagementEntity;
 import com.incofer.demo.enums.ActivityType;
 import com.incofer.demo.enums.Status;
 import com.incofer.demo.model.Station;
 import com.incofer.demo.model.TrainManagement;
 import com.incofer.demo.model.TrainSchedule;
-import com.incofer.demo.persistence.StationRepositoryPersistence;
-import com.incofer.demo.persistence.TrainScheduleRepositoryPersistence;
-import com.incofer.demo.persistence.repository.StationRepository;
-import com.incofer.demo.persistence.repository.TrainManagementRepository;
-import com.incofer.demo.persistence.TrainManagementRepositoryPersistence;
-import com.incofer.demo.persistence.repository.TrainScheduleRepository;
+import com.incofer.demo.persistence.StationPersistence;
+import com.incofer.demo.persistence.TrainSchedulePersistence;
+import com.incofer.demo.persistence.TrainManagementPersistence;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,66 +25,59 @@ public class TrainManagementService
 {
 
     @Autowired
-    @Qualifier("trainScheduleRepositoryPersistenceImpl")
-    private TrainScheduleRepositoryPersistence trainScheduleRepositoryPersistence;
+    @Qualifier("trainSchedulePersistenceImpl")
+    private TrainSchedulePersistence trainSchedulePersistence;
     @Autowired
-    @Qualifier("stationRepositoryPersistenceImpl")
-    private StationRepositoryPersistence stationRepositoryPersistence;
+    @Qualifier("stationPersistenceImpl")
+    private StationPersistence stationPersistence;
 
     @Autowired
-    @Qualifier("trainManagementRepositoryPersistenceImpl")
-    private TrainManagementRepositoryPersistence trainManagementRepositoryPersistence;
+    @Qualifier("trainManagementPersistenceImpl")
+    private TrainManagementPersistence trainManagementPersistence;
 
-    @Autowired
-    private TrainManagementRepository trainManagementRepository;
-    @Autowired
-    private StationRepository stationRepository;
-    @Autowired
-    private TrainScheduleRepository trainScheduleRepository;
-
-    public TrainManagementService(TrainManagementRepositoryPersistence trainManagementRepositoryPersistence)
+    public TrainManagementService(TrainManagementPersistence trainManagementPersistence)
     {
-        this.trainManagementRepositoryPersistence = trainManagementRepositoryPersistence;
+        this.trainManagementPersistence = trainManagementPersistence;
     }
 
     public TrainManagement getTrainManagement(final long id)
     {
-        Optional<TrainManagement> optionalTrainManagement = this.trainManagementRepositoryPersistence.getTrainManagement(id);
+        Optional<TrainManagement> optionalTrainManagement = this.trainManagementPersistence.getTrainManagement(id);
         return optionalTrainManagement.get();
     }
     @Transactional
     public void deleteByTrainManagementId(long trainManagementId)
     {
         log.trace("TrainManagement {} - Entered TrainManagement.deleteByTrainManagementId()", trainManagementId);
-        this.trainManagementRepositoryPersistence.deleteByTrainManagementId(trainManagementId);
+        this.trainManagementPersistence.deleteByTrainManagementId(trainManagementId);
     }
     @Transactional
     public TrainManagement persistTrainManagement(@NonNull final TrainManagement trainManagement)
     {
         log.trace("TrainManagement {} - Entered persistence.persistTrainManagement()", trainManagement.getId());
-        this.trainManagementRepositoryPersistence.persistTrainManagement(trainManagement);
+        this.trainManagementPersistence.persistTrainManagement(trainManagement);
         return trainManagement;
     }
 
-/*revisar si es necesario*/
+    /*revisar si es necesario*/
     @Transactional
     public Station getCurrentStation(long trainManagementId)
     {
-        log.info("Start getCurrentStation id {}", trainManagementId);
+        log.info("Start getCurrentStationn id {}", trainManagementId);
 
-        Optional<TrainManagementEntity> optionalTrainManagementEntity = this.trainManagementRepository.findById(trainManagementId);
+        Optional<TrainManagement> optionalTrainManagementEntity = this.trainManagementPersistence.getTrainManagement(trainManagementId);
 
         if (optionalTrainManagementEntity.isPresent())
         {
-            TrainManagementEntity trainManagementEntity = optionalTrainManagementEntity.get();
-            long currentStationId = trainManagementEntity.getTrainManagement().getCurrentStationId();
-            TrainSchedule trainSchedule = trainScheduleRepository.findById(trainManagementEntity.getTrainManagement().getTrainScheduleId())
+            TrainManagement trainManagement = optionalTrainManagementEntity.get();
+            long currentStationId = trainManagement.getCurrentStationId();
+            TrainSchedule trainSchedule = trainSchedulePersistence.getTrainSchedule(trainManagement.getTrainScheduleId())
                     .orElseThrow(() ->
                     {
-                        String errorMessage = "TrainSchedule not found for TrainManagement ID: " + trainManagementId;
+                        String errorMessage = "TrainSchedulee not found for TrainManagement ID: " + trainManagementId;
                         log.error(errorMessage);
                         throw new IllegalArgumentException(errorMessage);
-                    }).getTrainSchedule();
+                    });
 
             Optional<Station> optionalStation = trainSchedule.getStations().stream()
                     .filter(station -> station.getId() == currentStationId)
@@ -117,7 +105,7 @@ public class TrainManagementService
     {
         log.info("Moving train to next station for trainManagementId: {}", trainManagementId);
 
-        TrainManagementEntity trainManagementEntity = trainManagementRepository.findById(trainManagementId)
+        TrainManagement trainManagement = trainManagementPersistence.getTrainManagement(trainManagementId)
                 .orElseThrow(() ->   // lo busca en el repo con el findById porque este es un metodo que ya tiene por default el jpaRepository
                 {
                     String errorMessage = "TrainManagement not found for ID: " + trainManagementId;
@@ -125,8 +113,8 @@ public class TrainManagementService
                     throw new IllegalArgumentException(errorMessage);
                 });
 
-        long currentStationId = trainManagementEntity.getTrainManagement().getCurrentStationId(); // currentStationId es un long que trainManagementEntity tiene que trar pasando por el Trainmagement
-        StationEntity currentStationEntity = stationRepository.findById(currentStationId) // busca el currentStationEntity en la station repo por la currentStationId
+        long currentStationId = trainManagement.getCurrentStationId(); // currentStationId es un long que trainManagement tiene que trar pasando por el Trainmagement
+        Station currentStation = this.stationPersistence.getStation(currentStationId) // busca el currentStation en la station repo por la currentStationId
                 .orElseThrow(() -> //sino error
                 {
                     String errorMessage = "Station not found for currentStationId: " + currentStationId;
@@ -134,7 +122,7 @@ public class TrainManagementService
                     throw new IllegalArgumentException(errorMessage);
                 });
 
-        Status currentStatus = trainManagementEntity.getTrainManagement().getStatus(); // trae el status
+        Status currentStatus = trainManagement.getStatus(); // trae el status
         if (currentStatus.equals(Status.OUT_OF_SERVICE)) // si es igual a out of service, tira el error de abajo
         {
             String errorMessage = "Cannot move to next station, train is currently out of service";
@@ -147,20 +135,20 @@ public class TrainManagementService
             throw new IllegalArgumentException(errorMessage);
         }
 
-        TrainSchedule trainSchedule = trainScheduleRepository.findById(trainManagementEntity.getTrainManagement().getTrainScheduleId())
-                .orElseThrow(() -> // busca en el repo por id el para que trainManagementEntity pásando por le trainManagement, Traiga el TrainScheduleId
+        TrainSchedule trainSchedule = trainSchedulePersistence.getTrainSchedule(trainManagement.getTrainScheduleId())
+                .orElseThrow(() -> // busca en el repo por id el para que trainManagement pásando por le trainManagement, Traiga el TrainScheduleId
                 { // sino tira el error
                     String errorMessage = "TrainSchedule not found for TrainManagement ID: " + trainManagementId;
                     log.error(errorMessage);
                     throw new IllegalArgumentException(errorMessage);
-                }).getTrainSchedule();
+                });
 
         List<Station> stations = trainSchedule.getStations(); // trae la lista de estaciones del trainSchedule
         int currentIndex = -1; // se inicializa la variable en -1
         for (int i = 0; i < trainSchedule.getStations().size(); i++) // este for lo que hace es la variable i inicializarla en 0,
         { // la condicion i si es menor que el tamaño de la lista de estaciones el bucle sigue y se va incrementando ++ el valor de i en uno
             Station station = trainSchedule.getStations().get(i); // trae el la posicion de la estacion en la lista
-            if (station.getId() == currentStationEntity.getId()) //se verifica si son iguales por el id
+            if (station.getId() == currentStation.getId()) //se verifica si son iguales por el id
             {
                 currentIndex = i; // para guardarlo en la variable
                 break;
@@ -181,20 +169,20 @@ public class TrainManagementService
                 if (lastStation.getActivityTypes().contains(ActivityType.TURN_POINT)) // y si esa ultima stacion tiene el getactivity
                 {  // va a empezar a devolverse
                     Collections.reverse(stations);
-                    trainManagementEntity.getTrainManagement().setCurrentStationId(stations.get(0).getId());// por el id se le va asignar valor 0
-                    trainManagementEntity.getTrainManagement().setStatus(Status.MOVE); // le da setea el status move
-                    trainManagementRepository.save(trainManagementEntity); // se envia a guardar al repo
+                    trainManagement.setCurrentStationId(stations.get(0).getId());// por el id se le va asignar valor 0
+                    trainManagement.setStatus(Status.MOVE); // le da setea el status move
+                    trainManagementPersistence.persistTrainManagement(trainManagement); // se envia a guardar al repo
                     log.info("Train has reached the last station with TURN_POINT activity type. Returning to the initial station by passing through all other stations in reverse order.");
                 } else // sino se le setea el status stop y el tren quedaria parado en la ultima station
                 {
-                    trainManagementEntity.getTrainManagement().setStatus(Status.STOP);
-                    trainManagementRepository.save(trainManagementEntity);
+                    trainManagement.setStatus(Status.STOP);
+                    trainManagementPersistence.persistTrainManagement(trainManagement);
                     log.info("Train has reached the last station without TURN_POINT activity type. Stopping the train.");
                 }
             } else
             {
-                trainManagementEntity.getTrainManagement().setStatus(Status.STOP);
-                trainManagementRepository.save(trainManagementEntity);
+                trainManagement.setStatus(Status.STOP);
+                trainManagementPersistence.persistTrainManagement(trainManagement);
                 log.info("Train has reached the last station. Stopping the train.");
             }
         } else     // sino esta es stop
@@ -203,21 +191,21 @@ public class TrainManagementService
             Station nextStation = trainSchedule.getStations().get(currentIndex + 1); // se le asigna a nextStation el Schedule y el indice
             long nextStationId = nextStation.getId(); // se trae el id de la siguiente estacion
 
-            trainManagementEntity.getTrainManagement().setCurrentStationId(nextStationId); // el id lo setea a la nextStationId
-            trainManagementRepository.save(trainManagementEntity); // y lo guarda
+            trainManagement.setCurrentStationId(nextStationId); // el id lo setea a la nextStationId
+            trainManagementPersistence.persistTrainManagement(trainManagement); // y lo guarda
             log.info("Train moved to the next station successfully.");
         }
 
         Station firstStation = trainSchedule.getStations().get(0);  // busca la primera station
-        if (trainManagementEntity.getTrainManagement().getCurrentStationId() == firstStation.getId() // si la station actual es igual a la primera station
-                && trainManagementEntity.getTrainManagement().getStatus() != Status.ORIGIN) // sino tiene status dif a Origin es que no ha llegado
+        if (trainManagement.getCurrentStationId() == firstStation.getId() // si la station actual es igual a la primera station
+                && trainManagement.getStatus() != Status.ORIGIN) // sino tiene status dif a Origin es que no ha llegado
         {
-            trainManagementEntity.getTrainManagement().setStatus(Status.ORIGIN); // se le setae el status origin
-            trainManagementRepository.save(trainManagementEntity); // se guarda en el repo y el tren retornará a la inicial station
+            trainManagement.setStatus(Status.ORIGIN); // se le setae el status origin
+            trainManagementPersistence.persistTrainManagement(trainManagement); // se guarda en el repo y el tren retornará a la inicial station
             log.info("Train has returned to the origin station. Sending a message.");
         }
 
-        return trainManagementEntity.getTrainManagement().getStatus(); // retorna el status del tren
+        return trainManagement.getStatus(); // retorna el status del tren
     }
 
     public static int getAdvancedKm(final List<Station> stations, final Station currentStation, boolean turnPoint)
@@ -251,7 +239,7 @@ public class TrainManagementService
 
     public List<Station> getStations(long trainManagementId)
     {
-        TrainManagementEntity trainManagementEntity = trainManagementRepository.findById(trainManagementId)
+        TrainManagement trainManagement = trainManagementPersistence.getTrainManagement(trainManagementId)
                 .orElseThrow(() ->   // lo busca en el repo con el findById porque este es un metodo que ya tiene por default el jpaRepository
                 {
                     String errorMessage = "TrainManagement not found for ID: " + trainManagementId;
@@ -260,15 +248,15 @@ public class TrainManagementService
                 });
 
 
-        TrainSchedule trainSchedule = trainScheduleRepository.findById(trainManagementEntity.getTrainManagement().getTrainScheduleId())
+        TrainSchedule trainSchedule = trainSchedulePersistence.getTrainSchedule(trainManagement.getTrainScheduleId())
                 .orElseThrow(() ->
                 {
                     String errorMessage = "TrainSchedule not found for TrainManagement ID: " + trainManagementId;
                     log.error(errorMessage);
                     throw new IllegalArgumentException(errorMessage);
-                }).getTrainSchedule();
-        long currentStationId = trainManagementEntity.getTrainManagement().getCurrentStationId(); // currentStationId es un long que trainManagementEntity tiene que trar pasando por el Trainmagement
-        StationEntity currentStationEntity = stationRepository.findById(currentStationId) // busca el currentStationEntity en la station repo por la currentStationId
+                });
+        long currentStationId = trainManagement.getCurrentStationId(); // currentStationId es un long que trainManagement tiene que trar pasando por el Trainmagement
+        Station currentStation = this.stationPersistence.getStation(currentStationId) // busca el currentStation en la station repo por la currentStationId
                 .orElseThrow(() -> //sino error
                 {
                     String errorMessage = "Station not found for currentStationId: " + currentStationId;
@@ -281,7 +269,7 @@ public class TrainManagementService
         for (int i = 0; i < trainSchedule.getStations().size(); i++) // este for lo que hace es la variable i inicializarla en 0,
         { // la condicion i si es menor que el tamaño de la lista de estaciones el bucle sigue y se va incrementando ++ el valor de i en uno
             Station station = trainSchedule.getStations().get(i); // trae el la posicion de la estacion en la lista
-            if (station.getId() == currentStationEntity.getId()) //se verifica si son iguales por el id
+            if (station.getId() == currentStation.getId()) //se verifica si son iguales por el id
             {
                 currentIndex = i; // para guardarlo en la variable
                 break;

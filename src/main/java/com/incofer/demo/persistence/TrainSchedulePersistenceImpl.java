@@ -10,14 +10,15 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
-@Repository
+@Repository("trainSchedulePersistenceImpl")
+
 @Slf4j
-public class TrainScheduleRepositoryPersistenceImpl implements TrainScheduleRepositoryPersistence
+public class TrainSchedulePersistenceImpl implements TrainSchedulePersistence
 {
     private final EntityManager entityManager;
 
     @Autowired
-    public TrainScheduleRepositoryPersistenceImpl(EntityManager entityManager) {
+    public TrainSchedulePersistenceImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
     /**

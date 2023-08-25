@@ -2,7 +2,7 @@ package com.incofer.demo.service;
 
 import com.incofer.demo.entity.TrainEntity;
 import com.incofer.demo.model.Train;
-import com.incofer.demo.persistence.TrainRepositoryPersistence;
+import com.incofer.demo.persistence.TrainPersistence;
 import com.incofer.demo.services.TrainService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class TrainServiceTest
 {
 
     @Mock
-    private TrainRepositoryPersistence trainRepositoryPersistence;
+    private TrainPersistence trainPersistence;
 
     @InjectMocks
     private TrainService trainService;
@@ -36,7 +36,7 @@ public class TrainServiceTest
         TrainEntity saveTrainEntity = new TrainEntity();
         saveTrainEntity.setId((String.valueOf(1L)));
         saveTrainEntity.setTrain(trainToSave);
-        when(trainRepositoryPersistence.persistTrain(trainToSave)).thenReturn(true);
+        when(trainPersistence.persistTrain(trainToSave)).thenReturn(true);
         boolean result = trainService.persistTrain(trainToSave);
         //verify(trainRepository, Mockito.times(1)).save(Mockito.any(TrainEntity.class));
         assertEquals(true, result);
@@ -48,7 +48,7 @@ public class TrainServiceTest
         TrainEntity trainEntity = new TrainEntity();
         trainEntity.setId("1");
         trainEntity.setTrain(findById);
-        when(this.trainRepositoryPersistence.getTrain(trainEntity.getId())).thenReturn(Optional.of(trainEntity.getTrain()));
+        when(this.trainPersistence.getTrain(trainEntity.getId())).thenReturn(Optional.of(trainEntity.getTrain()));
         Train result = this.trainService.getTrain(trainEntity.getId());
         assertEquals(result, trainEntity.getTrain());
     }
